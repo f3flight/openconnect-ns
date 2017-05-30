@@ -12,9 +12,14 @@ This approach is not compatible with systemd-networkd. You need to stop&disable 
 5. Use visudo to allow your user to run `/etc/vpnc/vpnc-script` (or any other script defined in `/etc/openconnect/myconn.conf` in `script=` line) without password and with allowed -E option. Add: `%sudo   ALL=(ALL) NOPASSWD:SETENV: /etc/vpnc/vpnc-script`
 6. `# sudo systemctl daemon-reload`
 7. `# sudo systemctl start openconnect-ns@myconn`
-8. Check that everything works - you should have `myconn` in output of "# ip netns", and you should have openconnect running inside this namespace. You should be able to access VPN resources from a console started like so `ip netns exec myconn bash`. You can use https://github.com/pekman/netns-exec to spawn broswer or other apps inside this namespace.
+8. Check that everything works - you should have `myconn` in output of "# ip netns", and you should have openconnect running inside this namespace. You should be able to access VPN resources from a console started like so `ip netns exec myconn bash`. You can use https://github.com/f3flight/netns-exec to spawn broswer or other apps inside this namespace.
 9. Use `# sudo systemctl enable openconnect-ns@myconn` to start this VPN automatically at boot, if desired.
 10. Enjoy.
+
+# Start a shell with VPN access as a current user:
+`sudo ip netns exec myconn sudo -u $(whoami) -i`
+or
+`netns-exec myconn bash` if https://github.com/f3flight/netns-exec is installed (uses sticky bit to execute as root).
 
 # Start a separate window of Chromium inside namespace:
 1. Install https://github.com/f3flight/netns-exec which helps passing dbus into namepsace.
