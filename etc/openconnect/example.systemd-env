@@ -1,0 +1,2 @@
+USER=some_local_linux_user
+HOSTNAME=server_to_connect_to

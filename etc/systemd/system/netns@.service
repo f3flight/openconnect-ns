@@ -1,0 +1,9 @@
+[Unit]
+Description=network namespace %I
+#StopWhenUnneeded=true
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/bin/ip netns add %I
+ExecStop=/bin/ip netns del %I

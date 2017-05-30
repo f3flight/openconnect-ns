@@ -1,0 +1,15 @@
+[Unit]
+Description=Openconnect VPN inside namespace to %I
+Requires=netns@%i.service netns-veth@%i.service
+After=netns@%i.service netns-veth@%i.service syslog.target network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+EnvironmentFile=/etc/openconnect/%i.systemd-env
+ExecStart=/usr/bin/ip netns exec %i sudo -u ${USER} /usr/bin/openconnect --config=/etc/openconnect/%i.conf ${HOSTNAME}
+KillSignal=SIGINT
+Restart=always
+
+[Install]
+WantedBy=default.target

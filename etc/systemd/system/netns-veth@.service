@@ -1,0 +1,20 @@
+[Unit]
+Description=veth interface inside namespace %I
+Requires=netns@%i.service
+After=netns@%i.service
+#StopWhenUnneeded=true
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+EnvironmentFile=/etc/netns-veth.%i.systemd-env
+ExecStart=/usr/bin/ip link add %i-veth-in type veth peer name %i-veth-out
+ExecStart=/usr/bin/ip link set %i-veth-in netns %i
+ExecStart=/usr/bin/ip addr add ${IP_OUT}${NETMASK} dev %i-veth-out
+ExecStart=/usr/bin/ip link set %i-veth-out up
+ExecStart=/usr/bin/ip netns exec %i /usr/bin/ip addr add ${IP_IN}${NETMASK} dev %i-veth-in
+ExecStart=/usr/bin/ip netns exec %i /usr/bin/ip link set %i-veth-in up
+ExecStart=/usr/bin/ip netns exec %i /usr/bin/ip route add default via ${IP_OUT}
+ExecStart=/usr/bin/iptables -t nat -A POSTROUTING -s ${IP_OUT}${NETMASK} -j MASQUERADE
+ExecStop=/usr/bin/iptables -t nat -D POSTROUTING -s ${IP_OUT}${NETMASK} -j MASQUERADE
+ExecStop=/usr/bin/ip link del %i-veth-out
