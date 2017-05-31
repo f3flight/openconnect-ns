@@ -3,6 +3,7 @@ systemd units and config templates to start OpenConnect as a non-root inside a n
 
 # Notes
 This approach is not compatible with systemd-networkd. You need to stop&disable systemd-networkd to have DNS working inside namespace. You need to use vpnc-script which is not aware of systemd-networkd (shipped with vpnc as of May2017), modified versions which communicate with systemd-networkd will fail, you may need to modify such script to use resolvconf instead.
+Since resolvconf will add openconnect DNS before the local, you may want to add `timeout:1` option into the default resolv.conf file to speed up main namespace's DNS when VPN is running. If you know a better solution to aworking DNS with multiple namespaces, please share.
 
 # Usage
 1. Put files into `/etc`: `cp -r etc/* /etc`.
