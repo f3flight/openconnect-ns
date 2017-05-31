@@ -26,4 +26,4 @@ or
 1. Install https://github.com/f3flight/netns-exec which helps passing dbus into namepsace.
 2. Create a new folder for user data. Chromium cannot reuse the same user folder.
 3. It is possible to copy current user data dir to retain configuration, but syncronisation of these folders my be a problem.
-4. `nohup netns-exec myconn chromium --user-data-dir=~/my-new-chromium-data-dir && exit`
+4. `nohup netns-exec myconn chromium --user-data-dir=/home/myuser/my-new-chromium-data-dir &`
