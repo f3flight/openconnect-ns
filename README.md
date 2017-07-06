@@ -10,11 +10,12 @@ This approach is not compatible with systemd-networkd. You need to remove "resol
 3. Modify `/etc/openconnect/myconn.conf`, `/etc/openconnect/myconn.systemd-env` and `/etc/netns-veth.myconn.systemd-env` to match your VPN configuration and system environment. `/etc/netns-veth.myconn.systemd-env` is used for veth setup, make sure the IPs and netmask there do not collide with your local or VPN networks.
 4. Ensure that the user defined in `/etc/openconnect/myconn.systemd-env` has automatic passwordless token generation properly configured (for ex. if using stoken, ensure that ~/.stokenrc is present and that `stoken` does not request a password or PIN) and that tokentype is correct in `/etc/openconnect/myconn.conf` (`tokentype=rsa` will use stoken)
 5. Use visudo to allow your user to run `/etc/vpnc/vpnc-script` (or any other script defined in `/etc/openconnect/myconn.conf` in `script=` line) without password and with allowed -E option. Add: `%sudo   ALL=(ALL) NOPASSWD:SETENV: /etc/vpnc/vpnc-script`
-6. `# sudo systemctl daemon-reload`
-7. `# sudo systemctl start openconnect-ns@myconn`
-8. Check that everything works - you should have `myconn` in output of "# ip netns", and you should have openconnect running inside this namespace. You should be able to access VPN resources from a console started like so `ip netns exec myconn bash`. You can use https://github.com/f3flight/netns-exec to spawn broswer or other apps inside this namespace.
-9. Use `# sudo systemctl enable openconnect-ns@myconn` to start this VPN automatically at boot, if desired.
-10. Enjoy.
+6. Give /usr/bin/openconnect network admin capabilities: `sudo setcap cap_net_admin+ep /usr/bin/openconnect`.
+7. `# sudo systemctl daemon-reload`
+8. `# sudo systemctl start openconnect-ns@myconn`
+9. Check that everything works - you should have `myconn` in output of "# ip netns", and you should have openconnect running inside this namespace. You should be able to access VPN resources from a console started like so `ip netns exec myconn bash`. You can use https://github.com/f3flight/netns-exec to spawn broswer or other apps inside this namespace.
+10. Use `# sudo systemctl enable openconnect-ns@myconn` to start this VPN automatically at boot, if desired.
+11. Enjoy.
 
 # Start a shell with VPN access as a current user:
 `sudo ip netns exec myconn sudo -u $(whoami) -i`
